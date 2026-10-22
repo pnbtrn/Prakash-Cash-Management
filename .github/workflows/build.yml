@@ -21,6 +21,10 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Recreate Android Project Files
+        run: |
+          flutter create . --platforms=android --org com.prakash.cashmanagement
+
       - name: Install Dependencies
         run: flutter pub get
 
