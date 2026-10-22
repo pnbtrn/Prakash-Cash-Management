@@ -21,18 +21,26 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Recreate Android Project Files
+      - name: Create Clean Flutter App
         run: |
-          flutter create . --platforms=android --project-name prakash_cash_management --org com.prakash.cashmanagement
-
-      - name: Install Dependencies
-        run: flutter pub get
+          # नया साफ प्रोजेक्ट बनाएँ
+          flutter create app --project-name prakash_cash_management --org com.prakash.cashmanagement
+          
+          # हमारी बनाई main.dart को नए प्रोजेक्ट में कॉपी करें
+          cp lib/main.dart app/lib/main.dart
+          
+          # intl पैकेज जोड़ें
+          cd app
+          flutter pub add intl
+          flutter pub get
 
       - name: Build Debug APK
-        run: flutter build apk --debug
+        run: |
+          cd app
+          flutter build apk --debug
 
       - name: Upload APK File
         uses: actions/upload-artifact@v4
         with:
           name: CashManagement-APK
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: app/build/app/outputs/flutter-apk/app-debug.apk
