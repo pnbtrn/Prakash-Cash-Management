@@ -13,7 +13,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
@@ -21,26 +21,29 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create Clean Flutter App
+      - name: Setup Android SDK Licenses
         run: |
-          # नया साफ प्रोजेक्ट बनाएँ
-          flutter create app --project-name prakash_cash_management --org com.prakash.cashmanagement
+          yes | flutter doctor --android-licenses || true
+
+      - name: Build Clean Application
+        run: |
+          # पुरानी डायरेक्टरी हटाएं यदि मौजूद हो
+          rm -rf clean_app
           
-          # हमारी बनाई main.dart को नए प्रोजेक्ट में कॉपी करें
-          cp lib/main.dart app/lib/main.dart
+          # नया प्रोजेक्ट बनाएं
+          flutter create clean_app --project-name prakash_cash_management --org com.prakash.cashmanagement
           
-          # intl पैकेज जोड़ें
-          cd app
+          # आपकी main.dart को कॉपी करें
+          cp lib/main.dart clean_app/lib/main.dart
+          
+          # पैकेज जोड़ें और बिल्ड करें
+          cd clean_app
           flutter pub add intl
           flutter pub get
+          flutter build apk --debug --no-tree-shake-icons
 
-      - name: Build Debug APK
-        run: |
-          cd app
-          flutter build apk --debug
-
-      - name: Upload APK File
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: CashManagement-APK
-          path: app/build/app/outputs/flutter-apk/app-debug.apk
+          path: clean_app/build/app/outputs/flutter-apk/app-debug.apk
