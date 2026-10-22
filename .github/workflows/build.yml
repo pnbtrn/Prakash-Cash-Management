@@ -40,10 +40,10 @@ jobs:
           cd clean_app
           flutter pub add intl
           flutter pub get
-          flutter build apk --debug --no-tree-shake-icons
+          flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: CashManagement-APK
-          path: clean_app/build/app/outputs/flutter-apk/app-debug.apk
+          path: clean_app/build/app/outputs/flutter-apk/app-release.apk
