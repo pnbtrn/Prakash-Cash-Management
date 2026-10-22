@@ -1,7 +1,7 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: # Allows manual trigger from your mobile phone
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
@@ -21,14 +21,16 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Install Dependencies
-        run: flutter pub get
+      - name: Build Clean App
+        run: |
+          rm -rf clean_app
+          flutter create clean_app --project-name prakash_cash_management --org com.prakash.cashmanagement
+          cp lib/main.dart clean_app/lib/main.dart
+          cd clean_app
+          flutter build apk --debug
 
-      - name: Build Debug APK
-        run: flutter build apk --debug
-
-      - name: Upload APK File
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: CashManagement-APK
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: clean_app/build/app/outputs/flutter-apk/app-debug.apk
